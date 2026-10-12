@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>投稿確認ツール β版</title>
+<meta name="description" content="SNS運用代行者さん向け。クライアントとの投稿の確認・修正のやり取りを、投稿ごとに1か所へ。β版の利用者を募集中です。">
+<meta property="og:title" content="投稿確認ツール β版">
+<meta property="og:description" content="クライアントの確認待ちを、リンク1本で。SNS運用代行者さん向けのβ版利用者を募集中です。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://yuukioda999.github.io/tonepost-lp/og.png">
+<meta property="og:url" content="https://yuukioda999.github.io/tonepost-lp/">
+<meta name="twitter:card" content="summary_large_image">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>
+/* Layout: 校正紙のように、左に言葉・右に実際の画面。朱は「OK」と行動のためだけに使う */
+:root{
+  --ground:#EEF0F3; --surface:#FFFFFF; --soft:#F6F7F9; --ink:#1D2127; --sub:#5C636E; --line:#D9DDE3;
+  --shu:#C8402A; --shu-ink:#FFFFFF; --shu-soft:#FBEAE6; --wait:#9A600A; --wait-soft:#FFF3DC;
+  --f-display:"Zen Kaku Gothic New","Noto Sans JP","Hiragino Sans",sans-serif;
+  --f-body:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
+  --r-card:16px; --r-btn:12px; --max:1120px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#14171B; --surface:#1C2026; --soft:#232830; --ink:#ECEEF1; --sub:#A3AAB4; --line:#323842;
+  --shu:#E0583F; --shu-ink:#FFFFFF; --shu-soft:#3A221D; --wait:#E3A548; --wait-soft:#33281A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ground:#14171B; --surface:#1C2026; --soft:#232830; --ink:#ECEEF1; --sub:#A3AAB4; --line:#323842;
+  --shu:#E0583F; --shu-ink:#FFFFFF; --shu-soft:#3A221D; --wait:#E3A548; --wait-soft:#33281A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.85;font-feature-settings:"palt";padding-inline:20px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--max);margin-inline:auto}
+h1,h2,h3{word-break:auto-phrase;font-family:var(--f-display);font-weight:900;line-height:1.4;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--shu);outline-offset:3px;border-radius:6px}
+.eyebrow{font-size:13px;font-weight:700;color:var(--sub);letter-spacing:.06em}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding-inline:28px;border-radius:var(--r-btn);background:var(--shu);color:var(--shu-ink);font-weight:700;font-size:17px;text-decoration:none;border:0;cursor:pointer;font-family:var(--f-body);transition:transform .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn svg{flex:0 0 auto}
+.sec{padding-block:72px;display:flex;flex-direction:column;gap:32px}
+.sec-head{display:flex;flex-direction:column;gap:10px;max-width:40em}
+.sec-head h2{font-size:clamp(24px,4vw,34px)}
+.sec-head p{color:var(--sub)}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:center;padding-block:18px;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:900;font-size:17px}
+.seal-mini{width:30px;height:30px;border-radius:50%;border:2px solid var(--shu);color:var(--shu);display:grid;place-items:center;font-size:10px;font-weight:900;transform:rotate(-10deg);font-family:var(--f-body)}
+.beta{font-size:12px;font-weight:700;color:var(--wait);background:var(--wait-soft);padding:4px 10px;border-radius:999px;white-space:nowrap}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:48px;align-items:center;padding-block:40px 64px}
+.hero-copy{display:flex;flex-direction:column;gap:24px;min-width:0}
+.hero h1{font-size:clamp(32px,5.4vw,54px);letter-spacing:-.01em}
+.hero h1 em{font-style:normal;color:var(--shu);white-space:nowrap}
+.lead{font-size:17px;color:var(--sub);max-width:30em}
+.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:16px}
+.hero-cta small{font-size:13px;color:var(--sub)}
+.phone{position:relative;justify-self:center;width:min(320px,100%)}
+.phone img{display:block;width:100%;height:auto;border-radius:28px;box-shadow:0 0 0 8px var(--ink),0 30px 60px -20px rgba(20,24,30,.35)}
+.stamp{position:absolute;right:-26px;bottom:90px;width:104px;height:104px;border-radius:50%;border:3px solid var(--shu);color:var(--shu);background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-12deg);line-height:1.1;box-shadow:0 8px 20px -8px rgba(0,0,0,.25)}
+.stamp b{font-size:28px;font-weight:900;font-family:var(--f-display)}
+.stamp span{font-size:11px;font-weight:700}
+
+/* voices */
+.voices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.voice{background:var(--surface);border-radius:var(--r-card);padding:24px;display:flex;flex-direction:column;gap:12px;box-shadow:0 0 0 1px var(--line)}
+.voice q{word-break:auto-phrase;font-family:var(--f-display);font-weight:700;font-size:18px;line-height:1.6;quotes:"「" "」"}
+.voice p{font-size:14.5px;color:var(--sub)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;counter-reset:step}
+.step{border-top:2px solid var(--ink);padding-top:18px;display:flex;flex-direction:column;gap:8px}
+.step::before{counter-increment:step;content:"STEP " counter(step);font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--sub)}
+.step h3{font-size:20px}
+.step p{font-size:15px;color:var(--sub)}
+.board{background:var(--surface);border-radius:var(--r-card);padding:12px;box-shadow:0 0 0 1px var(--line);overflow:hidden}
+.board img{display:block;width:100%;height:auto;border-radius:10px}
+.cap-note{font-size:13px;color:var(--sub);text-align:center}
+
+/* focus feature */
+.feature{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:48px;align-items:center}
+.feature figure{margin:0;justify-self:center;width:min(340px,100%)}
+.feature figure img{display:block;width:100%;height:auto;border-radius:20px;box-shadow:0 0 0 1px var(--line),0 24px 50px -24px rgba(20,24,30,.35)}
+.feature-copy{display:flex;flex-direction:column;gap:18px;min-width:0}
+.feature-copy h2{font-size:clamp(24px,4vw,34px)}
+.marker{background:linear-gradient(transparent 60%,var(--wait-soft) 60%)}
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.checks li{display:flex;gap:12px;align-items:flex-start}
+.checks svg{margin-top:5px;flex:0 0 auto;color:var(--shu)}
+
+/* price */
+.price{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.plan{background:var(--surface);border-radius:var(--r-card);padding:24px;display:flex;flex-direction:column;gap:6px;box-shadow:0 0 0 1px var(--line)}
+.plan.now{box-shadow:0 0 0 2px var(--shu)}
+.plan .name{font-weight:700;font-size:15px}
+.plan .yen{font-family:var(--f-display);font-weight:900;font-size:32px;font-variant-numeric:tabular-nums;line-height:1.3}
+.plan .yen small{font-size:14px;font-family:var(--f-body);font-weight:500;color:var(--sub)}
+.plan .who{font-size:14.5px;color:var(--sub)}
+.plan .tag{align-self:flex-start;font-size:12px;font-weight:700;color:var(--shu);background:var(--shu-soft);padding:3px 10px;border-radius:999px;margin-bottom:6px}
+.fine{font-size:13.5px;color:var(--sub)}
+
+/* join */
+.join{background:var(--surface);border-radius:24px;padding:clamp(28px,5vw,56px);box-shadow:0 0 0 1px var(--line);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
+.join h2{font-size:clamp(24px,4vw,34px)}
+.join-copy{display:flex;flex-direction:column;gap:16px}
+.ask{display:flex;flex-direction:column;gap:14px;background:var(--soft);border-radius:var(--r-card);padding:24px}
+.ask h3{font-size:17px}
+.ask ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px;font-size:15px}
+.ask .btn{width:100%}
+.fallback{font-size:14.5px;background:var(--wait-soft);color:var(--ink);border-radius:12px;padding:14px 16px}
+.fallback b{color:var(--wait)}
+
+/* faq */
+.faq{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line);padding-block:4px}
+.faq summary{cursor:pointer;font-weight:700;padding-block:16px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"＋";color:var(--sub);font-weight:400}
+.faq details[open] summary::after{content:"−"}
+.faq p{padding-bottom:18px;color:var(--sub);max-width:42em}
+
+footer{padding-block:40px 56px;font-size:13px;color:var(--sub);display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line)}
+
+/* sticky mobile CTA */
+.sticky{display:none}
+
+@media (max-width:860px){
+  .hero,.feature,.join{grid-template-columns:minmax(0,1fr)}
+  .hero{gap:40px;padding-block:24px 48px}
+  .phone{width:min(270px,78%)}
+  .stamp{right:-18px;width:84px;height:84px}
+  .stamp b{font-size:22px}
+  .voices,.steps,.price{grid-template-columns:minmax(0,1fr)}
+  .feature figure{order:2}
+  .sec{padding-block:56px}
+  .sticky{display:flex;position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--surface);box-shadow:0 -1px 0 var(--line);z-index:10}
+  .sticky .btn{width:100%;min-height:52px}
+  footer{padding-bottom:110px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="seal-mini" aria-hidden="true">OK</span>投稿確認ツール</div>
+    <span class="beta">β版 利用者募集中</span>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">SNS運用代行者さん向け</p>
+        <h1 id="hero-title">クライアントの<br>確認待ちを、<br><em>リンク1本</em>で終わらせる。</h1>
+        <p class="lead">投稿の確認・修正・素材のやり取りを、投稿ごとに1か所へ。クライアントさんはスマホでリンクを開いて、OKか「直してほしい」を返すだけです。</p>
+        <div class="hero-cta">
+          <a class="btn" href="#join">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l10 -10"/></svg>
+            β版に参加する（無料）</a>
+          <small>クライアント1社までは、ずっと無料</small>
+        </div>
+      </div>
+      <div class="phone">
+        <img src="phone.webp" width="780" height="1688" alt="クライアントのスマホ画面。投稿ごとに『この内容でOK』『直してほしい』のボタンが並ぶ">
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="voices-title">
+      <div class="sec-head">
+        <p class="eyebrow">運用代行者さん10人以上に聞いてわかったこと</p>
+        <h2 id="voices-title">困っているのは、作ることより「確認」でした</h2>
+      </div>
+      <div class="voices">
+        <article class="voice">
+          <q>確認はチャット、進み具合はスプレッドシート</q>
+          <p>連絡と管理が別の場所にあって、どの投稿がOKでどれが修正中か、毎回見比べることになる。</p>
+        </article>
+        <article class="voice">
+          <q>まとめて送ると、半分くらい流し読みで返ってくる</q>
+          <p>どこを見てほしいかを1〜2個に絞って伝えると、返ってくる精度が上がる。</p>
+        </article>
+        <article class="voice">
+          <q>結局、いかにすぐチェックしてもらえるか</q>
+          <p>返事が来るまで次に進めない。間に合わないときは打合せの場で一緒に確認している。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="how-title">
+      <div class="sec-head">
+        <p class="eyebrow">使い方</p>
+        <h2 id="how-title">3つの手順で、確認が1か所にまとまります</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><h3>まとめて確認を依頼</h3><p>投稿を登録して、確認してほしいものを選んで送るだけ。クライアントさんには確認用のリンクが届きます。</p></div>
+        <div class="step"><h3>スマホでOKか修正か</h3><p>アプリもログインも不要。投稿ごとに「OK」か「直してほしい」を押して、素材もその場で追加できます。</p></div>
+        <div class="step"><h3>全社の状況が一目で</h3><p>素材待ち・制作中・確認待ち・修正中・完了。何社担当していても、止まっている投稿がすぐわかります。</p></div>
+      </div>
+      <figure class="board" style="margin:0">
+        <img src="board.webp" width="1800" height="1070" loading="lazy" alt="代行者側の進捗ボード。クライアントごとに投稿が素材待ち・制作中・確認待ちなどの列に並んでいる">
+      </figure>
+      <p class="cap-note">代行者さんの画面（PC）。クライアントごとに、投稿の進み具合が並びます。</p>
+    </section>
+
+    <section class="sec" aria-labelledby="focus-title">
+      <div class="feature">
+        <figure>
+          <img src="focus.webp" width="780" height="1705" loading="lazy" alt="投稿の上に『Yuuさんより：ここだけ見てください』という確認ポイントが表示されたクライアント画面">
+        </figure>
+        <div class="feature-copy">
+          <p class="eyebrow">流し読みを防ぐ</p>
+          <h2 id="focus-title">投稿ごとに<span class="marker">「ここだけ見てください」</span>を添えられます</h2>
+          <p class="lead">確認してほしいポイントが、クライアントさんの画面のいちばん上に出ます。全部を読まなくても、見るべき場所がすぐわかります。</p>
+          <ul class="checks">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l10 -10"/></svg><span>修正はその投稿に直接書き込めるので、どの投稿の話かで迷いません</span></li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l10 -10"/></svg><span>未確認のままなら、自動でリマインドが届きます</span></li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l10 -10"/></svg><span>キャプション・構成・デザインと、確認の段階を分けて依頼できます</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="price-title">
+      <div class="sec-head">
+        <p class="eyebrow">料金</p>
+        <h2 id="price-title">β版のあいだは、すべて無料です</h2>
+        <p>正式版は、担当しているクライアントの数に合わせて選べる予定です。</p>
+      </div>
+      <div class="price">
+        <div class="plan now"><span class="tag">ずっと無料</span><span class="name">フリー</span><span class="yen">0<small>円</small></span><span class="who">クライアント1社まで</span></div>
+        <div class="plan"><span class="name">ライト</span><span class="yen">1,480<small>円/月</small></span><span class="who">クライアント3社まで</span></div>
+        <div class="plan"><span class="name">チーム</span><span class="yen">9,800<small>円/月</small></span><span class="who">クライアント10社まで</span></div>
+      </div>
+      <p class="fine">正式版の料金は予定です。β版に参加いただいた方には、正式版の開始前にご案内します。</p>
+    </section>
+
+    <section class="sec" id="join" aria-labelledby="join-title">
+      <div class="join">
+        <div class="join-copy">
+          <p class="eyebrow">β版の利用者を募集しています</p>
+          <h2 id="join-title">一緒に使いながら、育ててくれる方を探しています</h2>
+          <p class="lead">まだ開発中です。実際の進め方を聞かせていただき、「この機能がほしい」という声を優先して作ります。購入や契約のお願いはしません。</p>
+        </div>
+        <div class="ask">
+          <h3>参加のときに教えてほしいこと</h3>
+          <ol>
+            <li>担当しているクライアントの数</li>
+            <li>今の確認のやり方（チャット・メール・スプレッドシートなど）</li>
+            <li>いちばん手間に感じていること</li>
+          </ol>
+          <a class="btn" id="form-btn" href="#join" hidden>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"/></svg>
+            参加フォームを開く</a>
+          <p class="fallback" id="form-fallback">このページを受け取ったXのやり取りに、<b>「β参加希望」</b>とひとこと返信してください。こちらからご連絡します。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="faq-title">
+      <div class="sec-head"><p class="eyebrow">よくある質問</p><h2 id="faq-title">気になるところ</h2></div>
+      <div class="faq">
+        <details><summary>クライアントさんにも登録してもらう必要がありますか？</summary><p>いいえ。クライアントさんは届いたリンクを開くだけで確認できます。過去の投稿をまとめて見たいときだけ、メールアドレスでログインできます（パスワードは不要です）。</p></details>
+        <details><summary>AIで投稿文を作るツールですか？</summary><p>いいえ。投稿を作るのは代行者さんです。このツールは、作った投稿の確認と修正のやり取りをまとめるためのものです。</p></details>
+        <details><summary>Instagramへの予約投稿はできますか？</summary><p>できません。SNSのアカウントとはつながず、確認の流れだけに絞っています。</p></details>
+        <details><summary>スマホアプリはありますか？</summary><p>アプリはありません。代行者さんはPCのブラウザ、クライアントさんはスマホのブラウザで使えます。</p></details>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>投稿確認ツール（仮称）β版</p>
+    <p>開発：Yuu（フリーランスエンジニア）</p>
+  </footer>
+</div>
+
+<div class="sticky"><a class="btn" href="#join">β版に参加する（無料）</a></div>
+
+<script>
+  // 参加フォームのURL（Googleフォームなど）を作ったらここに入れる。空のあいだはXでの返信を案内する。
+  const FORM_URL = "";
+  if (FORM_URL) {
+    const b = document.getElementById("form-btn");
+    b.href = FORM_URL; b.target = "_blank"; b.rel = "noopener"; b.hidden = false;
+    document.getElementById("form-fallback").hidden = true;
+  }
+</script>
+
+</body>
+</html>
