@@ -112,6 +112,20 @@ a{color:inherit}
 .ask h3{font-size:17px}
 .ask ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px;font-size:15px}
 .ask .btn{width:100%}
+.ask .field{display:flex;flex-direction:column;gap:6px;border:0;margin:0;padding:0;min-width:0}
+.ask label,.ask legend{font-size:14px;font-weight:700;padding:0}
+.req{font-size:11px;font-weight:700;color:var(--shu);background:var(--shu-soft);padding:1px 6px;border-radius:4px;margin-left:4px}
+.ask input[type=text],.ask input[type=email],.ask select,.ask textarea{width:100%;min-height:48px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:16px;color:var(--ink);background:var(--surface)}
+.ask textarea{resize:vertical;line-height:1.7}
+.ask input:focus,.ask select:focus,.ask textarea:focus{outline:2px solid var(--shu);outline-offset:1px;border-color:transparent}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{font-weight:500;cursor:pointer}
+.chips input{position:absolute;opacity:0;width:1px;height:1px}
+.chips span{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:14px}
+.chips input:checked+span{border-color:var(--shu);color:var(--shu);background:var(--shu-soft);font-weight:700}
+.chips input:focus-visible+span{outline:3px solid var(--shu);outline-offset:2px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.form-note{font-size:13px;color:var(--sub)}
 .fallback{font-size:14.5px;background:var(--wait-soft);color:var(--ink);border-radius:12px;padding:14px 16px}
 .fallback b{color:var(--wait)}
 
@@ -140,6 +154,8 @@ footer{padding-block:40px 56px;font-size:13px;color:var(--sub);display:flex;flex
   .sec{padding-block:56px}
   .sticky{display:flex;position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--surface);box-shadow:0 -1px 0 var(--line);z-index:10}
   .sticky .btn{width:100%;min-height:52px}
+  .sticky.off{display:none}
+  .ask{padding:20px}
   footer{padding-bottom:110px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -247,18 +263,47 @@ footer{padding-block:40px 56px;font-size:13px;color:var(--sub);display:flex;flex
           <h2 id="join-title">一緒に使いながら、育ててくれる方を探しています</h2>
           <p class="lead">まだ開発中です。実際の進め方を聞かせていただき、「この機能がほしい」という声を優先して作ります。購入や契約のお願いはしません。</p>
         </div>
-        <div class="ask">
-          <h3>参加のときに教えてほしいこと</h3>
-          <ol>
-            <li>担当しているクライアントの数</li>
-            <li>今の確認のやり方（チャット・メール・スプレッドシートなど）</li>
-            <li>いちばん手間に感じていること</li>
-          </ol>
-          <a class="btn" id="form-btn" href="#join" hidden>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"/></svg>
-            参加フォームを開く</a>
-          <p class="fallback" id="form-fallback">このページを受け取ったXのやり取りに、<b>「β参加希望」</b>とひとこと返信してください。こちらからご連絡します。</p>
-        </div>
+        <form class="ask" id="beta-form" action="https://formsubmit.co/yuuki.oda.work@gmail.com" method="POST">
+          <h3>β版の参加フォーム</h3>
+          <input type="hidden" name="_subject" value="【投稿確認ツール】β版の参加申し込み">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_next" value="https://yuukioda999.github.io/tonepost-lp/thanks.html">
+          <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="field">
+            <label for="f-name">お名前・Xのアカウント名 <span class="req">必須</span></label>
+            <input id="f-name" name="お名前・Xアカウント" type="text" required placeholder="例）山田 / @yamada_sns">
+          </div>
+          <div class="field">
+            <label for="f-email">メールアドレス <span class="req">必須</span></label>
+            <input id="f-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label for="f-count">担当しているクライアントの数</label>
+            <select id="f-count" name="クライアント数">
+              <option value="">選んでください</option>
+              <option>1社</option><option>2〜3社</option><option>4〜10社</option><option>11社以上</option>
+            </select>
+          </div>
+          <fieldset class="field">
+            <legend>今の確認のやり方（いくつでも）</legend>
+            <div class="chips">
+              <label><input type="checkbox" name="確認のやり方" value="LINE"><span>LINE</span></label>
+              <label><input type="checkbox" name="確認のやり方" value="Chatwork・Slackなど"><span>Chatwork・Slack</span></label>
+              <label><input type="checkbox" name="確認のやり方" value="メール"><span>メール</span></label>
+              <label><input type="checkbox" name="確認のやり方" value="スプレッドシート"><span>スプレッドシート</span></label>
+              <label><input type="checkbox" name="確認のやり方" value="打合せ・電話"><span>打合せ・電話</span></label>
+            </div>
+          </fieldset>
+          <div class="field">
+            <label for="f-pain">いちばん手間に感じていること</label>
+            <textarea id="f-pain" name="手間に感じていること" rows="3" placeholder="例）クライアントの返事待ちで次に進めない"></textarea>
+          </div>
+          <button class="btn" type="submit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14l11 -11"/><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"/></svg>
+            無料で申し込む</button>
+          <p class="form-note">送信後、こちらからメールでご連絡します。購入や契約のお願いはしません。</p>
+        </form>
       </div>
     </section>
 
@@ -281,15 +326,11 @@ footer{padding-block:40px 56px;font-size:13px;color:var(--sub);display:flex;flex
 
 <div class="sticky"><a class="btn" href="#join">β版に参加する（無料）</a></div>
 
-<script>
-  // 参加フォームのURL（Googleフォームなど）を作ったらここに入れる。空のあいだはXでの返信を案内する。
-  const FORM_URL = "";
-  if (FORM_URL) {
-    const b = document.getElementById("form-btn");
-    b.href = FORM_URL; b.target = "_blank"; b.rel = "noopener"; b.hidden = false;
-    document.getElementById("form-fallback").hidden = true;
-  }
-</script>
 
+<script>
+  // 申し込みフォームが見えている間は、画面下の固定ボタンを隠す
+  const sticky=document.querySelector('.sticky'), join=document.getElementById('join');
+  if('IntersectionObserver' in window&&sticky&&join){new IntersectionObserver(e=>sticky.classList.toggle('off',e[0].isIntersecting)).observe(join)}
+</script>
 </body>
 </html>
